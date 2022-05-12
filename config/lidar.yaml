@@ -1,0 +1,3 @@
+type: "ouster"
+sensor_hostname: "10.1.0.199"
+data_destination_ip: "10.1.0.101"
