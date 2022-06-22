@@ -85,10 +85,6 @@ namespace dora{
             /// \param _lidarBuffCb function that accepts an the buffer data and the info data of the lidar
             void setLidarBuffCb(std::function<void(std::unique_ptr<uint8_t[]>&, ouster::sensor::sensor_info)> _lidarBuffCb);
 
-            /// Method that give the current frequency of the reading loop of the lidar
-            /// \return float with the fequency value
-            float frequency();
-
             /// Method that returns the direction matrix to transform the packet lidar data into an actual point cloud
             /// \param _mId value of the range data section that is being calculated
             /// \return direction eigen matrix to transform the packet lidar data
