@@ -35,9 +35,8 @@
 #include <condition_variable>
 #include <mutex>
 
-namespace aerox{
+namespace dora{
     class LidarOuster;
-    class OctomapServer;
 }
 
 using namespace cartographer;
@@ -70,14 +69,14 @@ namespace dora{
             mapping::MapBuilderInterface::LocalSlamResultCallback slamResultCallback();
             bool initComms();
             void initVisualization();
-            void visualizeOctomap(aerox::OctomapBlock &_octoblock);
+            void visualizeOctomap(viz::OctomapBlock &_octoblock);
 
         private:
             bool saveVizPc_ = false;
             float submapMinProb_ = 0.55;
             bool highSubmapRes_ = false;
 
-            std::shared_ptr<aerox::LidarOuster> lidar_;
+            std::shared_ptr<dora::LidarOuster> lidar_;
 
             std::unique_ptr<cartographer::mapping::MapBuilderInterface> mapBuilder_;
             mapping::TrajectoryBuilderInterface* trajBuilder_;
@@ -101,7 +100,7 @@ namespace dora{
             std::thread vizThread_;
             bool weWannaSee_ = false;
             bool uncompressed_ = false;
-            aerox::Scene3d scene_;
+            viz::Scene3d scene_;
             Eigen::Matrix4f cameraPose_;
             float camPitch_ = 0.0f; 
             float camYaw_ = 0.0f;

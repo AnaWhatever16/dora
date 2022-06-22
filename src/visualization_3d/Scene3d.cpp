@@ -24,7 +24,7 @@
 
 #include <iostream>
 
-namespace aerox{
+namespace viz{
     Scene3d* Scene3d::currentInstance_ = nullptr;
     GLfloat Scene3d::currentAspect_=1;
     std::vector<std::function<void(unsigned char, int, int)>> Scene3d::keyboardCallbacks_ = {};

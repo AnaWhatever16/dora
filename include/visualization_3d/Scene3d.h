@@ -39,10 +39,9 @@
 #include <math.h>
 
 #include <thread>
-namespace aerox{
+namespace viz{
 
     /// Handler of 3d scene to be display using OpenGL
-    /// @ingroup aerox_gl
     class Scene3d{
     public:
         struct Point {

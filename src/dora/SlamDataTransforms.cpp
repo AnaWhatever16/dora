@@ -25,11 +25,11 @@
 using namespace cartographer;
 
 namespace dora{
-    sensor::TimedPointCloudData ousterBuff2CartographerPc(std::unique_ptr<uint8_t[]>& _ousterBuffer, std::shared_ptr<aerox::LidarOuster> _lidar){
+    sensor::TimedPointCloudData ousterBuff2CartographerPc(std::unique_ptr<uint8_t[]>& _ousterBuffer, std::shared_ptr<dora::LidarOuster> _lidar){
         sensor::PointCloudWithIntensities pc;
         uint64_t nanoTs;
 
-        rawBuff2Pc(_ousterBuffer, _lidar, [&](aerox::OusterPcMatrix& _p, uint64_t _ts){
+        rawBuff2Pc(_ousterBuffer, _lidar, [&](dora::OusterPcMatrix& _p, uint64_t _ts){
                                                 for(int i = 0; i < _p.rows(); i++){
                                                     pc.points.push_back(sensor::TimedRangefinderPoint{{_p(i,0),_p(i,1), _p(i,2)}});
                                                 }
@@ -41,11 +41,11 @@ namespace dora{
         return cartographerPc;
     }
 
-    std::vector<aerox::Scene3d::Point> ousterBuff2SceneCloud(std::unique_ptr<uint8_t[]>& _ousterBuffer, std::shared_ptr<aerox::LidarOuster> _lidar, int &_mId){
-        std::vector<aerox::Scene3d::Point> newCloud;
+    std::vector<viz::Scene3d::Point> ousterBuff2SceneCloud(std::unique_ptr<uint8_t[]>& _ousterBuffer, std::shared_ptr<dora::LidarOuster> _lidar, int &_mId){
+        std::vector<viz::Scene3d::Point> newCloud;
 
-        _mId = rawBuff2Pc(_ousterBuffer, _lidar, [&](aerox::OusterPcMatrix& _p, uint64_t _ts){
-                                                        aerox::Scene3d::Point point;
+        _mId = rawBuff2Pc(_ousterBuffer, _lidar, [&](dora::OusterPcMatrix& _p, uint64_t _ts){
+                                                        viz::Scene3d::Point point;
                                                         for(int i = 0; i < _p.rows(); i++){
                                                             point.x = _p(i,0);
                                                             point.y = _p(i,1);
@@ -58,7 +58,7 @@ namespace dora{
     }
 
 
-    sensor::ImuData ouster2CartographerImu(aerox::ImuOusterPacket &_imu){
+    sensor::ImuData ouster2CartographerImu(dora::ImuOusterPacket &_imu){
         sensor::ImuData imu;
         Eigen::Vector3d acc = {_imu.accX, _imu.accY, _imu.accZ};
         imu.linear_acceleration = acc;
@@ -88,11 +88,11 @@ namespace dora{
         return mat;
     }
 
-    std::vector<aerox::Scene3d::Point> cartographer2SceneCloud(sensor::RangeData &_cartographerPc){
+    std::vector<viz::Scene3d::Point> cartographer2SceneCloud(sensor::RangeData &_cartographerPc){
         sensor::PointCloud pc = _cartographerPc.returns;
-        std::vector<aerox::Scene3d::Point> newCloud;
+        std::vector<viz::Scene3d::Point> newCloud;
         for(auto p : pc.points()){
-            aerox::Scene3d::Point point;
+            viz::Scene3d::Point point;
             Eigen::Vector3f pos = p.position;
             point.x = pos(0);
             point.y = pos(1);
@@ -102,8 +102,8 @@ namespace dora{
         return newCloud;
     }
 
-    std::vector<aerox::Scene3d::Point> cartographerSubmaps2SceneMap(const std::vector<std::shared_ptr<const mapping::Submap>> &_allSubmaps, bool _highRes, float _submapMinProb){
-        std::vector<aerox::Scene3d::Point> map;
+    std::vector<viz::Scene3d::Point> cartographerSubmaps2SceneMap(const std::vector<std::shared_ptr<const mapping::Submap>> &_allSubmaps, bool _highRes, float _submapMinProb){
+        std::vector<viz::Scene3d::Point> map;
         itThroughCartoGrid(_allSubmaps, _highRes, _submapMinProb, [&](Eigen::Array3i _block, double _resolution, int _gridSize){
                                                                         map.push_back({ _block.x() * _resolution + _resolution/2,
                                                                                         _block.y() * _resolution + _resolution/2,
@@ -113,14 +113,14 @@ namespace dora{
         return map;
     }
 
-    aerox::OctomapBlock cartoSubmaps2Octblock(const std::vector<std::shared_ptr<const mapping::Submap>> &_allSubmaps, bool _highRes, float _submapMinProb){
+    viz::OctomapBlock cartoSubmaps2Octblock(const std::vector<std::shared_ptr<const mapping::Submap>> &_allSubmaps, bool _highRes, float _submapMinProb){
         float resolution = getSubmapsResolution(_allSubmaps, _highRes);
         int gridSize = getSubmapsGridSize(_allSubmaps, _highRes);
         float limit = gridSize/2 * resolution;
 
         Eigen::Array3f minXYZ = {-limit, -limit, -limit};
         Eigen::Array3f maxXYZ = {limit, limit, limit};
-        aerox::OctomapBlock map(gridSize, gridSize, gridSize, minXYZ[0], minXYZ[1], minXYZ[2], maxXYZ[0], maxXYZ[1], maxXYZ[2]);
+        viz::OctomapBlock map(gridSize, gridSize, gridSize, minXYZ[0], minXYZ[1], minXYZ[2], maxXYZ[0], maxXYZ[1], maxXYZ[2]);
         
         itThroughCartoGrid(_allSubmaps, _highRes, _submapMinProb, [&](Eigen::Array3i _block, double _resolution, int _gridSize){                                       
                                                                         map.occupy( (uint32_t)(_block.x() + gridSize/2), 
@@ -134,12 +134,12 @@ namespace dora{
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    int rawBuff2Pc(std::unique_ptr<uint8_t[]>& _packetBuf, std::shared_ptr<aerox::LidarOuster> _lidar, std::function<void(aerox::OusterPcMatrix&, uint64_t)> _pointInsert2Cloud){
+    int rawBuff2Pc(std::unique_ptr<uint8_t[]>& _packetBuf, std::shared_ptr<dora::LidarOuster> _lidar, std::function<void(dora::OusterPcMatrix&, uint64_t)> _pointInsert2Cloud){
         ouster::sensor::packet_format packetFormat = _lidar->getFormat(); 
 
         int mId = 0;
         uint64_t nanoTs = 0;
-        Eigen::Array ranges = aerox::OusterPcMatrix(packetFormat.columns_per_packet*packetFormat.pixels_per_column, 3);
+        Eigen::Array ranges = dora::OusterPcMatrix(packetFormat.columns_per_packet*packetFormat.pixels_per_column, 3);
 
         int count = 0;
         for(int v = 0; v<packetFormat.columns_per_packet;v++){
@@ -159,7 +159,7 @@ namespace dora{
             nanoTs = header.ts;
         }
 
-        aerox::OusterPcMatrix points = _lidar->getDirectionMatrix(mId)*ranges + _lidar->getOffsetMatrix(mId);
+        dora::OusterPcMatrix points = _lidar->getDirectionMatrix(mId)*ranges + _lidar->getOffsetMatrix(mId);
         _pointInsert2Cloud(points, nanoTs);
 
         return mId;

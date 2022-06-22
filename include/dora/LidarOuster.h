@@ -46,7 +46,7 @@ namespace ouster {
 #include <chrono>
 #include <functional>
 
-namespace aerox{
+namespace dora{
     struct ImuOusterPacket{
         // Acceleration in g
         float accX = 0.0f;
@@ -64,7 +64,6 @@ namespace aerox{
     using OusterPcMatrix = Eigen::Array<double, Eigen::Dynamic, 3>;
 
     /// Class that handles connection with Lidar Ouster.
-    /// @ingroup aerox_suite
     class LidarOuster {
         public:
             /// Constructor

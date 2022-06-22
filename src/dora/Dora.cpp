@@ -38,7 +38,7 @@ namespace dora{
         weWannaSee_ = doraConfig["enable_visualization"].as<bool>();
         uncompressed_ = doraConfig["uncompressed_map"].as<bool>();
 
-        lidar_ = std::shared_ptr<aerox::LidarOuster>(new aerox::LidarOuster);
+        lidar_ = std::shared_ptr<dora::LidarOuster>(new dora::LidarOuster);
         if(!lidar_->init(lidarConfig)) return false;
 
         auto fileResolver = absl::make_unique<common::ConfigurationFileResolver>(std::vector<std::string>{_configFolderPath});
@@ -67,7 +67,7 @@ namespace dora{
     }
 
     bool Dora::start(){
-        lidar_->setImuCb([&](aerox::ImuOusterPacket &_imuPacket){
+        lidar_->setImuCb([&](dora::ImuOusterPacket &_imuPacket){
             auto cartographerImu = dora::ouster2CartographerImu(_imuPacket);
             trajBuilder_->AddSensorData(imuSensor_.id, cartographerImu);        
         });
@@ -207,9 +207,9 @@ namespace dora{
         });
     }
 
-    void Dora::visualizeOctomap(aerox::OctomapBlock &_octoblock){
+    void Dora::visualizeOctomap(viz::OctomapBlock &_octoblock){
         if(_octoblock.width() != 0){
-            std::vector<aerox::Scene3d::Point> centers;
+            std::vector<viz::Scene3d::Point> centers;
             for(unsigned i = 0; i < _octoblock.width(); i++){
                 for(unsigned j=0; j < _octoblock.height(); j++){
                     for(unsigned k = 0; k < _octoblock.depth(); k++){

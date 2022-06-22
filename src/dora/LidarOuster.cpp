@@ -38,7 +38,7 @@
 #include "ouster/lidar_scan.h"
 #include "ouster/types.h"
 
-namespace aerox{
+namespace dora{
     LidarOuster::~LidarOuster(){
         runRead_ = false;
         if(readOuster_.joinable()) readOuster_.join();

@@ -30,9 +30,8 @@ namespace stl_reader{
     class StlMesh;
 }
 
-namespace aerox{
+namespace viz{
     /// Class that wraps a single mesh to be display
-    /// @ingroup aerox_gl
     class Mesh{
     public:
         bool loadMesh(std::string _path);

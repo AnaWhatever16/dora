@@ -21,8 +21,8 @@
 // SOFTWARE.
 
 
-#ifndef AEROXSUITE_TOOLS_VISUALIZATION3D_HELPERS_ICOSAHEDRON_H_
-#define AEROXSUITE_TOOLS_VISUALIZATION3D_HELPERS_ICOSAHEDRON_H_
+#ifndef VISUALIZATION3D_HELPERS_ICOSAHEDRON_H_
+#define VISUALIZATION3D_HELPERS_ICOSAHEDRON_H_
 
 #include <math.h>
 #include <string.h>
@@ -34,7 +34,7 @@
 using namespace std;
 
 
-namespace aerox{
+namespace viz{
         
 
     class Icosahedron{

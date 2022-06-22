@@ -25,7 +25,7 @@
 #include <string>
 #include <cstdint>
 
-namespace aerox{
+namespace viz{
 
     /// This Struct holds the minimal information about a level of an octomap. The purpose is to have a smaller as possible packet of information. The data 
     /// is compressed using RLE.

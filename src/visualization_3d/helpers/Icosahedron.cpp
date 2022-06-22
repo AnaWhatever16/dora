@@ -29,7 +29,7 @@
 using namespace std;
 
 
-namespace aerox{
+namespace viz{
         
     void Icosahedron::position(float _x, float _y, float _z){
         x_ = _x;

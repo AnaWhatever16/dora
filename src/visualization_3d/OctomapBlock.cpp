@@ -25,7 +25,7 @@
 #include <cmath>
 #include <cassert>
 
-namespace aerox{
+namespace viz{
     OctomapBlock::OctomapBlock( uint32_t _width, uint32_t _height, uint32_t _depth,
                                 float _minX, float _minY, float _minZ,
                                 float _maxX, float _maxY, float _maxZ){

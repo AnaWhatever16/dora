@@ -23,7 +23,6 @@
 #ifndef DORA_SLAMDATATRANSFORMS_H_
 #define DORA_SLAMDATATRANSFORMS_H_
 
-#if !defined(AEROX_IS_WINDOWS)
 #include <cartographer/mapping/map_builder.h>
 #include <visualization_3d/Scene3d.h>
 #include <dora/LidarOuster.h>
@@ -59,12 +58,12 @@ namespace dora{
     /// \param _buffer pointer to the buffer data given by the ouster lidar.
     /// \param _lidar shared pointer to the ouster lidar.
     /// \return cartographer timed point cloud data with ranges and time filled.
-    sensor::TimedPointCloudData ousterBuff2CartographerPc(std::unique_ptr<uint8_t[]>& _buffer, std::shared_ptr<aerox::LidarOuster> _lidar);
+    sensor::TimedPointCloudData ousterBuff2CartographerPc(std::unique_ptr<uint8_t[]>& _buffer, std::shared_ptr<dora::LidarOuster> _lidar);
 
     /// This function transforms the data struct given by the LidarOuster class into the cartographer imu data struct.
     /// \param _imu lidar ouster imu data struct
     /// \return cartographer imu data struct
-    sensor::ImuData ouster2CartographerImu(aerox::ImuOusterPacket &_imu);
+    sensor::ImuData ouster2CartographerImu(dora::ImuOusterPacket &_imu);
 
     /// This function transforms the data contained in the pose given by the result class of cartographer slam into a pose matrix
     /// \param _cartographerPose Rigid3d cartographer class witht the data from the result of the slam
@@ -76,31 +75,31 @@ namespace dora{
     /// \param _lidar shared pointer to the ouster lidar.
     /// \param _mId value of the fraction of point cloud contained in the buffer
     /// \return a vector with scene3d points 
-    std::vector<aerox::Scene3d::Point> ousterBuff2SceneCloud(std::unique_ptr<uint8_t[]>& _ousterBuffer, std::shared_ptr<aerox::LidarOuster> _lidar, int &_mId);
+    std::vector<viz::Scene3d::Point> ousterBuff2SceneCloud(std::unique_ptr<uint8_t[]>& _ousterBuffer, std::shared_ptr<dora::LidarOuster> _lidar, int &_mId);
     
     /// This function transforms the result local range data given by the resulting slam given by cartographer into a scene3d point cloud
     /// \param _cartographerPc local range data given by cartographer
     /// \return a vector with scene3d points 
-    std::vector<aerox::Scene3d::Point> cartographer2SceneCloud(sensor::RangeData &_cartographerPc);
+    std::vector<viz::Scene3d::Point> cartographer2SceneCloud(sensor::RangeData &_cartographerPc);
     
     /// This function transforms the submaps given as a result of the cartographer slam into a scene3d point cloud
     /// \param _allSubmaps std vector containing the submaps given by the result of the cartographer slam
     /// \param _highRes true if you desire to obtain a high resolution point cloud
     /// \param _submapMinProb sets the probability of hit of a point in the grid
     /// \return a vector with scene3d points 
-    std::vector<aerox::Scene3d::Point> cartographerSubmaps2SceneMap(const std::vector<std::shared_ptr<const mapping::Submap>> &_allSubmaps, bool _highRes = false, float _submapMinProb = 0.55f);
+    std::vector<viz::Scene3d::Point> cartographerSubmaps2SceneMap(const std::vector<std::shared_ptr<const mapping::Submap>> &_allSubmaps, bool _highRes = false, float _submapMinProb = 0.55f);
     
     /// \param _allSubmaps std vector containing the submaps given by the result of the cartographer slam
     /// \param _highRes true if you desire to obtain a high resolution point cloud
     /// \param _submapMinProb sets the probability of hit of a point in the grid
     /// \return pointcloud in octoblock class
-    aerox::OctomapBlock cartoSubmaps2Octblock(const std::vector<std::shared_ptr<const mapping::Submap>> &_allSubmaps, bool _highRes = false, float _submapMinProb = 0.55f);
+    viz::OctomapBlock cartoSubmaps2Octblock(const std::vector<std::shared_ptr<const mapping::Submap>> &_allSubmaps, bool _highRes = false, float _submapMinProb = 0.55f);
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     // Helpers for functions above
-    int rawBuff2Pc(std::unique_ptr<uint8_t[]>& _packetBuf, std::shared_ptr<aerox::LidarOuster> _lidar, std::function<void(aerox::OusterPcMatrix&, uint64_t)> _pointInsert2Cloud);
+    int rawBuff2Pc(std::unique_ptr<uint8_t[]>& _packetBuf, std::shared_ptr<dora::LidarOuster> _lidar, std::function<void(dora::OusterPcMatrix&, uint64_t)> _pointInsert2Cloud);
     void itThroughCartoGrid(const std::vector<std::shared_ptr<const mapping::Submap>> &_allSubmaps, bool _highRes, float _submapMinProb, 
                             std::function<void(Eigen::Array3i, double, int)> _handleGridBlock);
     MeasurementBlock getMeasurementBlock(std::unique_ptr<uint8_t[]> &_packetBuf, size_t _mBlock, ouster::sensor::packet_format _format);
@@ -110,8 +109,5 @@ namespace dora{
     float getSubmapsResolution(const std::vector<std::shared_ptr<const mapping::Submap>>& _allSubmaps, bool _highRes = false);
     int getSubmapsGridSize(const std::vector<std::shared_ptr<const mapping::Submap>>& _allSubmaps, bool _highRes = false);
 }
-
-#endif
-
 
 #endif

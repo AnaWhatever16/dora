@@ -30,7 +30,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-namespace aerox{
+namespace viz{
 
     bool Mesh::loadMesh(std::string _path){
         meshReader_ = new stl_reader::StlMesh<float, unsigned int>(_path);
