@@ -241,6 +241,3 @@ namespace dora{
         return grid.grid_size();  
     }
 }
-
-
-#endif

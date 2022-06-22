@@ -27,7 +27,7 @@
 #include <cartographer/mapping/map_builder.h>
 #include <visualization_3d/Scene3d.h>
 #include <dora/LidarOuster.h>
-#include <aerox_utils/OctomapBlock.h>
+#include <visualization_3d/OctomapBlock.h>
 #include <cartographer/mapping/3d/submap_3d.h>
 #include <cartographer/mapping/3d/hybrid_grid.h>
 

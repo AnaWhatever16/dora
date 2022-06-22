@@ -25,8 +25,6 @@
 #include <dora/LidarOuster.h>
 #include <dora/SlamDataTransforms.h>
 #include <cartographer/common/configuration_file_resolver.h>
-#include <aerox_comm/AdminServer.h>
-#include <aerox_comm/impl/servers/OctomapServer.h>
 
 #include <yaml-cpp/yaml.h>
 
@@ -114,23 +112,6 @@ namespace dora{
     }
 
     bool Dora::initComms(){
-        if(!aerox::AdminServer::get()->run(3001)) return false;
-        octomapServer_ = std::shared_ptr<aerox::OctomapServer>(new aerox::OctomapServer("global"));
-        aerox::AdminServer::get()->registerServer(octomapServer_);
-
-        aerox::AdminServer::get()->registerStream("/dora/estimated_pose", aerox::STREAM_FREQUENCIES::ON_DEMAND,
-                                                    [&](){
-                                                        std::unique_lock<std::mutex> lock(poseWaitMutex_);
-                                                        poseWait_.wait(lock);
-                                                        
-                                                        poseHandle_.lock();
-                                                        std::string wsPacket(reinterpret_cast<char*>(estimatedPose_.data()), sizeof(float)*16);
-                                                        poseHandle_.unlock();
-
-                                                        return wsPacket;
-
-                                                    }, "Estimated pose, calculated by Dora");
-
         runServer_ = true;
         serverThread_ = std::thread([&](){
             while(runServer_){
@@ -152,8 +133,6 @@ namespace dora{
                     scene_.updateAxis(idPoseAxis_, estimatedPose_);
                     poseHandle_.unlock();
                 }
-
-                octomapServer_->sendMap(octomap);
             }
         });
         

@@ -20,25 +20,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+#---------------------------------------------------------------------------------------------------------------------
+cmake_minimum_required (VERSION "3.12" FATAL_ERROR)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
+project(dora_project VERSION ${AEROX_SUITE_VERSION} LANGUAGES CXX)
+include_directories(include)
 #---------------------------------------------------------------------------------------------------------------------
 # General project configuration
-file(GLOB_RECURSE DORA_HDR "include/dora/*.h" "include/dora/*.inl")
-file(GLOB_RECURSE DORA_SRC "src/dora/*.cpp")
+file(GLOB_RECURSE DORA_HDR "include/dora/*.h" "include/dora/*.inl" "include/visualization_3d/*.h" "include/visualization_3d/*.inl")
+file(GLOB_RECURSE DORA_SRC "src/dora/*.cpp" "src/visualization_3d/*.cpp")
 
-set(APP_NAME "dora")
-add_executable(${APP_NAME} ${DORA_SRC} ${DORA_HDR})
-set_target_properties(${APP_NAME} PROPERTIES FOLDER "apps")
-                                
-target_include_directories(${APP_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-    )
-    GroupSources(include)
-    GroupSources(src)
-
-    set_target_properties(${APP_NAME} PROPERTIES CXX_STANDARD ${VES_CPP_STD})
+set(APP_NAME "dora_exe")
+add_executable(${APP_NAME} ${DORA_SRC} ${DORA_HDR} )
 
 # Add boost
 find_package(Boost 1.66 REQUIRED system exception iostreams)
@@ -54,3 +50,18 @@ target_link_libraries(${APP_NAME} LINK_PUBLIC cartographer)
 # Eigen3
 find_package(Eigen3 REQUIRED)
 target_link_libraries(${APP_NAME} LINK_PUBLIC Eigen3::Eigen)
+
+# GLUT
+find_package(GLUT REQUIRED)
+target_link_libraries(${APP_NAME} LINK_PUBLIC ${GLUT_LIBRARIES} glut GLU GLEW pthread GL)
+
+# Ouster
+target_link_libraries(${APP_NAME} LINK_PUBLIC ouster_client)
+target_include_directories(${APP_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/ouster)
+
+# Yaml cpp
+find_package(yaml-cpp REQUIRED)
+target_include_directories(${APP_NAME} PUBLIC ${YAML_CPP_INCLUDE_DIR})
+target_link_libraries(${APP_NAME} LINK_PUBLIC ${YAML_CPP_LIBRARIES} yaml-cpp)
+
+add_subdirectory(ouster)

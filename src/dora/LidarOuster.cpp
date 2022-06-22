@@ -86,10 +86,9 @@ namespace aerox{
 
         readOuster_ = std::thread(&LidarOuster::readLoop, this);
 
-        isInit_ = true; /// 666 Need to assure that first cloud has been read
         std::cout << "\033[1;32mLidar Client initialized\033[0m" << std::endl;
 
-        return isInit_;
+        return true;
     }
 
     void LidarOuster::setImuCb(std::function<void(ImuOusterPacket&)> _imuCb){
@@ -138,7 +137,6 @@ namespace aerox{
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
 
-        RateCounter count(1000);
         while(runRead_){
             ouster::sensor::client_state st = ouster::sensor::poll_client(*handleClient_);
             // buffer to store raw packet data
@@ -191,5 +189,3 @@ namespace aerox{
         }
     }
 }
-
-#endif

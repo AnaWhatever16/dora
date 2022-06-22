@@ -28,7 +28,7 @@
 #include <cartographer/mapping/map_builder_interface.h>
 #include <cartographer/mapping/proto/map_builder_options.pb.h>
 #include <visualization_3d/Scene3d.h>
-#include <aerox_utils/OctomapBlock.h>
+#include <visualization_3d/OctomapBlock.h>
 #include <Eigen/Eigen>
 
 #include <thread>
@@ -46,7 +46,7 @@ namespace dora{
     class Dora {
         public:
             /// Constructor
-            Dora();
+            Dora() {};
 
             /// Destructor
             virtual ~Dora() {};
@@ -95,7 +95,6 @@ namespace dora{
             std::mutex poseWaitMutex_, octoblockWaitMutex_;
             std::mutex poseHandle_, octoblockHandle_;
 
-            std::shared_ptr<aerox::OctomapServer> octomapServer_;
             std::thread serverThread_;
             bool runServer_ = false;
 

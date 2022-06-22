@@ -140,5 +140,3 @@ namespace aerox{
 }
 
 #endif
-
-#endif

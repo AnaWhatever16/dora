@@ -34,19 +34,12 @@
 //                                                       //
 ///////////////////////////////////////////////////////////
 
-#include <client/linux/handler/exception_handler.h>
-
 #include <dora/Dora.h>
 #include <csignal>
 #include <iostream>
 #include <string>
 
 dora::Dora *run_dora;
-
-void signalHandler( int _signum ) {
-    std::cout << "Captured close signal. Closing politely." << std::endl;
-    run_dora->stop();
-}
 
 int main(int _argc, char**_argv){
     std::string path2Config = _argv[1];
